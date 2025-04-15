@@ -1,0 +1,112 @@
+{% extends 'shop/basic.html' %}
+{% block title %} Checkout {% endblock %}
+{% block body %}
+<div class="container">
+    <div class="col my-4">
+        <h2>Step 1 - Express Checkout: Review Your Cart Items</h2>
+        <div class="my-4">
+            <ul class="list-group" id="items">
+            </ul>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mt-3">
+                    <li class="breadcrumb-item active" aria-current="page">
+                        Your Cart Total Is <b>Rs.<span id="totalPrice"></span></b> &mdash; Enter your details below & place your order.
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="col my-4">
+        <h2>Step 2 - Enter Address & Other Details:</h2>
+        <div class="card p-4 shadow-sm">
+            <form method="post" action="{% url 'Checkout' %}">
+                {% csrf_token %}
+                <!-- Hidden fields for items and amount -->
+                <input type="hidden" name="items_json" id="id_items_json">
+                <input type="hidden" name="amount" id="id_amount">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="{{ form.name.id_for_label }}">Name</label>
+                        {{ form.name }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="{{ form.email.id_for_label }}">Email</label>
+                        {{ form.email }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.address1.id_for_label }}">Address</label>
+                    {{ form.address1 }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.address2.id_for_label }}">Address line 2</label>
+                    {{ form.address2 }}
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="{{ form.city.id_for_label }}">City</label>
+                        {{ form.city }}
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="{{ form.state.id_for_label }}">State</label>
+                        {{ form.state }}
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="{{ form.zip_code.id_for_label }}">Zip</label>
+                        {{ form.zip_code }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.phone.id_for_label }}">Phone Number</label>
+                    {{ form.phone }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Razorpay</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+    // Retrieve cart data from localStorage
+    var cart = {};
+    if (localStorage.getItem('cart') === null) {
+        cart = {};
+    } else {
+        cart = JSON.parse(localStorage.getItem('cart'));
+    }
+    console.log(cart);
+    var sum = 0;
+    var totalPrice = 0;
+
+    if ($.isEmptyObject(cart)) {
+        $('#items').append(`<li class="list-group-item">Your cart is empty, please add some items before checking out!</li>`);
+    } else {
+        for (var item in cart) {
+            let name = cart[item][1];
+            let qty = cart[item][0];
+            let itemPrice = cart[item][2];
+            sum += qty;
+            totalPrice += qty * itemPrice;
+            var mystr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${name}
+                            <span class="badge badge-primary badge-pill">Qty: ${qty}</span>
+                         </li>`;
+            $('#items').append(mystr);
+        }
+    }
+    document.getElementById('totalPrice').innerHTML = totalPrice;
+    // Update hidden form fields (Django form renders them with id="id_fieldname")
+    if (document.getElementById('id_amount')) {
+        document.getElementById('id_amount').value = totalPrice;
+    }
+    if (document.getElementById('id_items_json')) {
+        document.getElementById('id_items_json').value = JSON.stringify(cart);
+    }
+    {% if thank %}
+      alert('Thanks for ordering with us. Your order is {{ id }}. Use it to track your order using our order tracker.');
+      localStorage.clear();
+      document.location = "/";
+    {% endif %}
+</script>
+{% endblock %}

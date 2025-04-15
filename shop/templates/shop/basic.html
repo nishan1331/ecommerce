@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,600&display=swap" rel="stylesheet">
+
+    <title>{% block title %}{% endblock %} EcommerceDJ</title>
+    <style>
+      body {
+         font-family: 'Montserrat', sans-serif;
+         background: #f7f7f7;
+         color: #333;
+      }
+      /* Navbar with a gradient background */
+      .navbar {
+         background: linear-gradient(45deg, #5facdb, #4286f4);
+      }
+      .navbar-brand, .nav-link {
+         color: #fff !important;
+         font-weight: 500;
+      }
+      .nav-link:hover {
+         color: #e0e0e0 !important;
+      }
+      /* Search field styling */
+      .form-control {
+         border-radius: 20px;
+      }
+      .btn-outline-light {
+         border-radius: 20px;
+      }
+      /* Custom popcart button style */
+      button.btn-secondary {
+         background-color: #4286f4;
+         border: none;
+         border-radius: 20px;
+         transition: background-color 0.3s ease;
+      }
+      button.btn-secondary:hover {
+         background-color: #3272d7;
+      }
+      /* Alert styling */
+      .alert {
+         border-radius: 0;
+      }
+      {% block css %}{% endblock %}
+    </style>
+  </head>
+  <body>
+
+    <nav class="navbar navbar-expand-lg">
+      <a class="navbar-brand" href="/">Ecommerce Django</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'AboutUs' %}">About Us</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'TrackingStatus' %}">Tracker</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'ContactUs' %}">Contact Us</a>
+          </li>
+        </ul>
+        {% comment %} <form class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
+        </form> {% endcomment %}
+        <button type="button" class="btn btn-secondary mx-2" id="popcart" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+          Cart(<span id="cart">0</span>)
+        </button>
+      </div>
+    </nav>
+    
+    {% if messages %}
+      {% for message in messages %}
+        {% if message.tags == 'ul' %}
+          <ul class="alert alert-{{ message.tags }}">
+            <li>{{ message }}</li>
+          </ul>
+        {% else %}
+          <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+          </div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+    
+    {% block body %}{% endblock %}
+    
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+    
+    {% block js %}{% endblock %}
+    
+
+  </body>
+</html>
